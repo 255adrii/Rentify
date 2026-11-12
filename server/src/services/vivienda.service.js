@@ -28,6 +28,29 @@ const crear = (datosVivienda) => {
     });
 };
 
+const actualizar = (id, datosVivienda) => {
+    if (
+        typeof datosVivienda.titulo !== 'string' ||
+        datosVivienda.titulo.trim() === '' ||
+        typeof datosVivienda.precio !== 'number' ||
+        !Number.isFinite(datosVivienda.precio) ||
+        datosVivienda.precio <= 0
+    ) {
+        throw new Error('Datos de vivienda no válidos');
+    }
+
+    return viviendaRepository.actualizar(id, {
+        titulo: datosVivienda.titulo.trim(),
+        precio: datosVivienda.precio
+    });
+};
+
+const eliminar = (id) => {
+    return viviendaRepository.eliminar(id);
+};
 
 
-module.exports = { obtenerTodas,obtenerPorId, crear };
+
+
+
+module.exports = { obtenerTodas,obtenerPorId, crear, actualizar, eliminar };

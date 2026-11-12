@@ -33,6 +33,56 @@ const crearVivienda = (req, res) => {
     }
 };
 
+const actualizarVivienda = (req, res) => {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({
+            mensaje: 'ID no válido'
+        });
+    }
+
+    try {
+        const vivienda = viviendaService.actualizar(id, req.body);
+
+        if (!vivienda) {
+            return res.status(404).json({
+                mensaje: 'Vivienda no encontrada'
+            });
+        }
+
+        res.json(vivienda);
+    } catch (error) {
+        res.status(400).json({
+            mensaje: error.message
+        });
+    }
+};
+
+const eliminarVivienda = (req, res) => {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({
+            mensaje: 'ID no válido'
+        });
+    }
+
+    const eliminada = viviendaService.eliminar(id);
+
+    if (!eliminada) {
+        return res.status(404).json({
+            mensaje: 'Vivienda no encontrada'
+        });
+    }
+
+    res.status(200).json({
+        mensaje: 'Vivienda eliminada correctamente'
+    });
+};
 
 
-module.exports = { obtenerViviendas, obtenerViviendaPorId, crearVivienda };
+
+
+
+module.exports = { obtenerViviendas, obtenerViviendaPorId, crearVivienda, actualizarVivienda, eliminarVivienda };

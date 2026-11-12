@@ -29,6 +29,33 @@ const crear = (datosVivienda) => {
     return nuevaVivienda;
 };
 
+const actualizar = (id, datosVivienda) => {
+    const vivienda = viviendas.find(v => v.id === id);
+
+    if (!vivienda) {
+        return null;
+    }
+
+    vivienda.titulo = datosVivienda.titulo;
+    vivienda.precio = datosVivienda.precio;
+
+    return vivienda;
+};
+
+const eliminar = (id) => {
+    const indice = viviendas.findIndex(vivienda => vivienda.id === id);
+
+    if (indice === -1) {
+        return false;
+    }
+
+    viviendas.splice(indice, 1);
+
+    return true;
+};
 
 
-module.exports = { obtenerTodas,obtenerPorId, crear };
+
+
+
+module.exports = { obtenerTodas,obtenerPorId, crear, actualizar, eliminar };
