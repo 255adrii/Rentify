@@ -12,6 +12,7 @@ const obtenerPorId = (id) => {
 
 
 const crear = (datosVivienda) => {
+    datosVivienda = datosVivienda || {};
     if (
         typeof datosVivienda.titulo !== 'string' ||
         datosVivienda.titulo.trim() === '' ||
@@ -29,6 +30,8 @@ const crear = (datosVivienda) => {
 };
 
 const actualizar = (id, datosVivienda) => {
+    if (!viviendaRepository.obtenerPorId(id)) return null;
+    datosVivienda = datosVivienda || {};
     if (
         typeof datosVivienda.titulo !== 'string' ||
         datosVivienda.titulo.trim() === '' ||
@@ -46,6 +49,10 @@ const actualizar = (id, datosVivienda) => {
 };
 
 const eliminar = (id) => {
+    const reservas = require('../repositories/reserva.repository').obtenerTodas();
+    if (reservas.some(reserva => reserva.viviendaId === id)) {
+        throw new Error('Elimina primero las reservas asociadas a esta vivienda');
+    }
     return viviendaRepository.eliminar(id);
 };
 

@@ -1,0 +1,24 @@
+<section class="detalle-page">
+  <a routerLink="/viviendas" class="volver"> ← Volver a viviendas </a>
+
+  @if (cargando()) {
+    <p>Cargando vivienda...</p>
+  } @else if (mensajeError()) {
+    <p class="error">{{ mensajeError() }}</p>
+  } @else if (vivienda(); as v) {
+    <article class="detalle-card">
+      <div class="detalle-imagen">
+        <span>⌂</span>
+      </div>
+      <div class="detalle-info">
+        <h1>{{ v.titulo }}</h1>
+        <button class="boton" [disabled]="carrito.contiene(v.id)" (click)="carrito.agregar(v)">
+          {{ carrito.contiene(v.id) ? 'En el carrito' : 'Añadir al carrito' }}
+        </button>
+        <a routerLink="/carrito">Ver carrito</a>
+        <p class="precio">{{ v.precio }} € / mes</p>
+        <p class="descripcion">Descubre esta vivienda disponible en Rentify.</p>
+      </div>
+    </article>
+  }
+</section>

@@ -10,6 +10,10 @@ const obtenerViviendas = (req, res) => {
 const obtenerViviendaPorId = (req, res) => {
     const id = Number(req.params.id);
 
+    if (!Number.isSafeInteger(id) || id <= 0) {
+        return res.status(400).json({ mensaje: 'ID no válido' });
+    }
+
     const vivienda = viviendaService.obtenerPorId(id);
 
     if (!vivienda) {
@@ -68,7 +72,12 @@ const eliminarVivienda = (req, res) => {
         });
     }
 
-    const eliminada = viviendaService.eliminar(id);
+    let eliminada;
+    try {
+        eliminada = viviendaService.eliminar(id);
+    } catch (error) {
+        return res.status(409).json({ mensaje: error.message });
+    }
 
     if (!eliminada) {
         return res.status(404).json({

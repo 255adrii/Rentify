@@ -3,6 +3,7 @@ const viviendas = [
     { id: 1, titulo: 'Piso en Madrid', precio: 950 },
     { id: 2, titulo: 'Apartamento en Móstoles', precio: 750 }
 ];
+let siguienteId = 3;
 
 const obtenerTodas = () => {
     return viviendas;
@@ -14,12 +15,8 @@ const obtenerPorId = (id) => {
 };
 
 const crear = (datosVivienda) => {
-    const nuevoId = viviendas.length > 0
-        ? Math.max(...viviendas.map(vivienda => vivienda.id)) + 1
-        : 1;
-
     const nuevaVivienda = {
-        id: nuevoId,
+        id: siguienteId++,
         titulo: datosVivienda.titulo,
         precio: datosVivienda.precio
     };

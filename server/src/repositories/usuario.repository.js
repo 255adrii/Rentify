@@ -12,6 +12,7 @@ const buscarPorId = (id) => {
 };
 
 const crear = (datosUsuario) => {
+    if (buscarPorEmail(datosUsuario.email)) throw new Error('El email ya está registrado');
     const nuevoUsuario = {
         id: siguienteId++,
         ...datosUsuario
@@ -22,8 +23,17 @@ const crear = (datosUsuario) => {
     return nuevoUsuario;
 };
 
+const actualizar = (id, datos) => {
+    const usuario = buscarPorId(id);
+    const duplicado = buscarPorEmail(datos.email);
+    if (duplicado && duplicado.id !== id) throw new Error('El email ya está registrado');
+    Object.assign(usuario, datos);
+    return usuario;
+};
+
 module.exports = {
     buscarPorEmail,
     buscarPorId,
-    crear
+    crear,
+    actualizar
 };

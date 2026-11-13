@@ -30,6 +30,7 @@ export class Login {
   });
 
   iniciarSesion() {
+    if (this.enviando()) return;
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
@@ -43,7 +44,7 @@ export class Login {
     next: (respuesta) => {
       this.enviando.set(false);
 
-      this.sesionService.iniciarSesion(respuesta.usuario);
+      this.sesionService.iniciarSesion(respuesta.usuario, respuesta.token);
 
       this.router.navigate(['/dashboard']);
     },

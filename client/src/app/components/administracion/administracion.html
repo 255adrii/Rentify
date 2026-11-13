@@ -1,0 +1,189 @@
+<section class="pagina">
+  <header class="cabecera">
+    <div>
+      <p class="sobretitulo">Panel de control</p>
+      <h1>Administración</h1>
+      <p class="introduccion">Una visión general de las viviendas y reservas de Rentify.</p>
+    </div>
+    <button type="button" class="boton secundario" [disabled]="cargando()" (click)="cargar()">
+      {{ cargando() ? 'Actualizando…' : 'Actualizar datos' }}
+    </button>
+  </header>
+
+  <div [attr.aria-busy]="cargando()">
+    @if (cargando()) {
+      <div class="panel estado" role="status">
+        <strong>Cargando resumen…</strong>
+        <p>Consultando las viviendas y reservas.</p>
+      </div>
+    } @else if (error()) {
+      <div class="panel estado" role="alert">
+        <h2>No se pudieron obtener los datos</h2>
+        <p class="error">{{ error() }}</p>
+        <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+      </div>
+    } @else {
+      <dl class="indicadores" aria-label="Indicadores de administración">
+        <div class="panel indicador">
+          <dt>Viviendas registradas</dt>
+          <dd>{{ viviendas() }}</dd>
+          <p>En el catálogo actual</p>
+        </div>
+        <div class="panel indicador">
+          <dt>Reservas totales</dt>
+          <dd>{{ totalReservas() }}</dd>
+          <p>Todos los estados</p>
+        </div>
+        <div class="panel indicador">
+          <dt>Reservas pendientes</dt>
+          <dd>{{ pendientes() }}</dd>
+          <p>Pendientes de confirmación</p>
+        </div>
+      </dl>
+      @if (sinDatos()) {
+        <div class="panel estado" role="status">
+          <h2>Tu actividad empieza aquí</h2>
+          <p>Aún no hay viviendas ni reservas registradas. Añade una vivienda para empezar.</p>
+          <a class="boton" routerLink="/viviendas/nueva">Añadir vivienda</a>
+        </div>
+      }
+      <div class="graficos">
+        <section class="panel actividad" aria-labelledby="titulo-actividad">
+          <h2 id="titulo-actividad">Reservas por mes</h2>
+          <p class="ayuda">
+            Agrupadas por mes de inicio de la estancia. Incluye pendientes, confirmadas y
+            canceladas.
+          </p>
+          @if (totalReservas()) {
+            <div class="selector-anio">
+              <label for="anio-reservas">Año de inicio</label>
+              <select id="anio-reservas" [value]="anioGrafico()" (change)="cambiarAnio($event)">
+                @for (anio of aniosDisponibles(); track anio) {
+                  <option [value]="anio">{{ anio }}</option>
+                }
+              </select>
+            </div>
+            <figure class="grafico" aria-labelledby="titulo-actividad">
+              <p class="nombre-eje">Reservas (número)</p>
+              <div class="marco-barras">
+                <div class="eje-y" aria-hidden="true">
+                  @for (marca of marcasEje(); track marca) {
+                    <span [style.bottom.%]="(marca / maximoMensual()) * 100">{{ marca }}</span>
+                  }
+                </div>
+                <div
+                  class="desplazamiento"
+                  role="region"
+                  aria-label="Reservas por mes; desplaza horizontalmente para ver todos los meses"
+                  tabindex="0"
+                >
+                  <ol class="barras">
+                    @for (mes of reservasPorMes(); track mes.mes) {
+                      <li
+                        [attr.aria-label]="mes.etiqueta + ': ' + mes.cantidad + ' reservas'"
+                        [title]="mes.etiqueta + ': ' + mes.cantidad + ' reservas'"
+                      >
+                        <div class="columna" aria-hidden="true">
+                          <div
+                            class="barra"
+                            [style.height.%]="(mes.cantidad / maximoMensual()) * 100"
+                          >
+                            <span class="cantidad">{{ mes.cantidad }}</span>
+                          </div>
+                        </div>
+                        <span class="mes" aria-hidden="true">{{ mes.abreviatura }}</span>
+                      </li>
+                    }
+                  </ol>
+                </div>
+              </div>
+              <p class="nombre-eje eje-x">Mes de inicio · {{ anioGrafico() }}</p>
+              <figcaption>
+                Los meses sin reservas tienen valor cero. Cada reserva se cuenta una vez en su mes
+                de inicio.
+              </figcaption>
+            </figure>
+          } @else {
+            <div class="vacio">
+              <h3>Aún no hay reservas</h3>
+              <p>El gráfico aparecerá cuando se registre la primera reserva.</p>
+              <a routerLink="/reservas/nueva">Crear una reserva</a>
+            </div>
+          }
+        </section>
+        <section class="panel actividad" aria-labelledby="titulo-estados">
+          <h2 id="titulo-estados">Reservas por estado</h2>
+          <p class="ayuda">Distribución de todas las reservas, de todos los años.</p>
+          @if (totalReservas()) {
+            <figure class="grafico distribucion" aria-labelledby="titulo-estados">
+              <div class="donut">
+                <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+                  @for (segmento of distribucionEstados(); track segmento.estado) {
+                    @if (segmento.cantidad) {
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="45"
+                        fill="none"
+                        stroke-width="17"
+                        pathLength="100"
+                        [attr.class]="'segmento ' + segmento.estado"
+                        [attr.stroke-dasharray]="
+                          segmento.porcentaje + ' ' + (100 - segmento.porcentaje)
+                        "
+                        [attr.stroke-dashoffset]="segmento.desplazamiento"
+                        transform="rotate(-90 60 60)"
+                      />
+                    }
+                  }
+                </svg>
+                <div class="centro-donut" aria-hidden="true">
+                  <strong>{{ totalReservas() }}</strong
+                  ><span>reservas</span>
+                </div>
+              </div>
+              <ul class="leyenda" aria-label="Cantidad y porcentaje por estado">
+                @for (segmento of distribucionEstados(); track segmento.estado) {
+                  <li>
+                    <span [attr.class]="'muestra ' + segmento.estado" aria-hidden="true"></span
+                    ><span>{{ segmento.etiqueta }}</span
+                    ><strong>{{ segmento.cantidad }}</strong
+                    ><span class="porcentaje">{{ segmento.porcentajeTexto }} %</span>
+                  </li>
+                }
+              </ul>
+              <figcaption>
+                Cantidad por estado dividida entre el total de reservas. Porcentajes redondeados a
+                un decimal.
+              </figcaption>
+            </figure>
+          } @else {
+            <div class="vacio">
+              <h3>Aún no hay reservas</h3>
+              <p>La distribución por estado aparecerá cuando se registre la primera reserva.</p>
+            </div>
+          }
+        </section>
+      </div>
+    }
+  </div>
+  <h2 class="titulo-gestion">Gestionar Rentify</h2>
+  <div class="resumen-grid gestion">
+    <article class="panel">
+      <h2>Viviendas</h2>
+      <p>Consulta, crea, edita y elimina las viviendas de Rentify.</p>
+      <div class="acciones">
+        <a class="boton" routerLink="/viviendas">Gestionar viviendas</a
+        ><a routerLink="/viviendas/nueva">Añadir vivienda</a>
+      </div>
+    </article>
+    <article class="panel">
+      <h2>Reservas</h2>
+      <p>Filtra todas las reservas y actualiza sus fechas y estado.</p>
+      <div class="acciones">
+        <a class="boton" routerLink="/reservas">Gestionar reservas</a
+        ><a routerLink="/reservas/nueva">Nueva reserva</a>
+      </div>
+    </article>
+  </div>
+</section>

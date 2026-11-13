@@ -1,0 +1,72 @@
+.detalle-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 45px 24px;
+}
+
+.volver {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.detalle-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.detalle-imagen {
+  height: 300px;
+  background: #e8ede6;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    font-size: 110px;
+    color: #657c68;
+  }
+}
+
+.detalle-info {
+  padding: 35px;
+
+  h1 {
+    margin: 0 0 18px;
+    font-size: 32px;
+    color: var(--color-primary);
+  }
+}
+
+.precio {
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.descripcion {
+  color: var(--color-text-secondary);
+}
+
+.error {
+  color: #b42318;
+}
+
+@media (max-width: 600px) {
+  .detalle-imagen {
+    height: 200px;
+  }
+
+  .detalle-info {
+    padding: 22px;
+  }
+}

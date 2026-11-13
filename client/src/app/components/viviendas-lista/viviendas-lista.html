@@ -1,8 +1,34 @@
 <section class="viviendas-page">
-
   <div class="encabezado">
     <h1>Descubre tu próximo hogar</h1>
     <p>Explora las viviendas disponibles en Rentify.</p>
+  </div>
+
+  @if (sesion.esAdmin()) {
+    <a routerLink="/viviendas/nueva" class="btn-detalle">+ Añadir vivienda</a>
+  }
+
+  @if (errorAccion()) {
+    <p class="error" role="alert">{{ errorAccion() }}</p>
+  }
+
+  <div class="barra-herramientas">
+    <app-filtro
+      etiqueta="Buscar vivienda"
+      placeholder="Buscar por título..."
+      (textoCambiado)="busqueda.set($event)"
+    />
+
+    <div class="ordenacion">
+      <label for="orden">Ordenar por</label>
+
+      <select id="orden" [value]="orden()" (change)="cambiarOrden($event)">
+        <option value="titulo-asc">Nombre A-Z</option>
+        <option value="titulo-desc">Nombre Z-A</option>
+        <option value="precio-asc">Precio: menor a mayor</option>
+        <option value="precio-desc">Precio: mayor a menor</option>
+      </select>
+    </div>
   </div>
 
   @if (cargando()) {
@@ -10,35 +36,44 @@
   } @else if (mensajeError()) {
     <p class="error">{{ mensajeError() }}</p>
   } @else {
-
     <div class="viviendas-grid">
-
-      @for (vivienda of viviendas(); track vivienda.id) {
-
+      @for (vivienda of viviendasVisibles(); track vivienda.id) {
         <article class="vivienda-card">
-
           <div class="vivienda-imagen">
             <span>⌂</span>
           </div>
 
           <div class="vivienda-info">
-
             <h2>{{ vivienda.titulo }}</h2>
 
-            <p class="precio">
-              {{ vivienda.precio }} € / mes
-            </p>
+            <p class="precio">{{ vivienda.precio }} € / mes</p>
 
+            <a [routerLink]="['/viviendas', vivienda.id]" class="btn-detalle"> Ver detalles </a>
+
+            <button
+              type="button"
+              class="boton"
+              [disabled]="carrito.contiene(vivienda.id)"
+              (click)="carrito.agregar(vivienda)"
+            >
+              {{ carrito.contiene(vivienda.id) ? 'En el carrito' : 'Añadir al carrito' }}
+            </button>
+            @if (sesion.esAdmin()) {
+              <a [routerLink]="['/viviendas/editar', vivienda.id]" class="btn-detalle"> Editar </a>
+              <button
+                type="button"
+                class="btn-detalle"
+                [disabled]="eliminando() !== null"
+                (click)="eliminar(vivienda)"
+              >
+                {{ eliminando() === vivienda.id ? 'Eliminando...' : 'Eliminar' }}
+              </button>
+            }
           </div>
-
         </article>
-
       } @empty {
-        <p>No hay viviendas disponibles.</p>
+        <p>No se encontraron viviendas.</p>
       }
-
     </div>
-
   }
-
 </section>

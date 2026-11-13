@@ -1,14 +1,7 @@
 
-const reservas = [
-    {
-        id: 1,
-        viviendaId: 1,
-        usuarioId: 1,
-        fechaInicio: '2026-12-01',
-        fechaFin: '2026-12-10',
-        estado: 'pendiente'
-    }
-];
+// Las reservas se crean con usuarios registrados desde la aplicación.
+const reservas = [];
+let siguienteId = 1;
 
 const obtenerTodas = () => {
     return reservas;
@@ -19,13 +12,9 @@ const obtenerPorId = (id) => {
 };
 
 const crear = (datosReserva) => {
-    const nuevoId = reservas.length > 0
-        ? Math.max(...reservas.map(reserva => reserva.id)) + 1
-        : 1;
-
     const nuevaReserva = {
-        id: nuevoId,
-        ...datosReserva
+        ...datosReserva,
+        id: siguienteId++
     };
 
     reservas.push(nuevaReserva);

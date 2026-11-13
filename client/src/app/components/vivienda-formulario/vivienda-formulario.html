@@ -1,0 +1,50 @@
+<section class="formulario-page">
+  <div class="formulario-card">
+    <a routerLink="/viviendas" class="volver"> ← Volver a viviendas </a>
+
+    <h1>
+      {{ modoEdicion() ? 'Editar vivienda' : 'Añadir vivienda' }}
+    </h1>
+
+    @if (cargando()) {
+      <p>Cargando vivienda...</p>
+    } @else if (errorCarga()) {
+      <p class="error" role="alert">{{ mensajeError() }}</p>
+    } @else {
+      <form [formGroup]="formulario" (ngSubmit)="guardar()">
+        <div class="campo">
+          <label for="titulo">Título de la vivienda</label>
+
+          <input
+            id="titulo"
+            type="text"
+            formControlName="titulo"
+            placeholder="Ej: Piso en Madrid"
+          />
+
+          @if (formulario.controls.titulo.touched && formulario.controls.titulo.invalid) {
+            <small class="error">El título es obligatorio.</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="precio">Precio mensual (€)</label>
+
+          <input id="precio" type="number" min="0.01" step="0.01" formControlName="precio" />
+
+          @if (formulario.controls.precio.touched && formulario.controls.precio.invalid) {
+            <small class="error"> Introduce un precio mayor que cero. </small>
+          }
+        </div>
+
+        @if (mensajeError()) {
+          <p class="error">{{ mensajeError() }}</p>
+        }
+
+        <button type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : modoEdicion() ? 'Guardar cambios' : 'Crear vivienda' }}
+        </button>
+      </form>
+    }
+  </div>
+</section>

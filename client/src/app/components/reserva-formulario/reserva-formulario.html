@@ -1,0 +1,72 @@
+<section class="pagina estrecha">
+  <div class="panel">
+    <a routerLink="/reservas">← Volver a reservas</a>
+    <h1>{{ id() === null ? 'Nueva reserva' : 'Editar reserva' }}</h1>
+    @if (cargando()) {
+      <p>Cargando datos...</p>
+    }
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+    @if (!cargando() && !errorCarga()) {
+      <form [formGroup]="formulario" (ngSubmit)="guardar()">
+        <div class="campo">
+          <label for="vivienda">Vivienda</label
+          ><select id="vivienda" formControlName="viviendaId">
+            <option [ngValue]="0">Selecciona una vivienda</option>
+            @for (v of viviendas(); track v.id) {
+              <option [ngValue]="v.id">{{ v.titulo }} · {{ v.precio }} €/mes</option>
+            }
+          </select>
+          @if (formulario.controls.viviendaId.touched && formulario.controls.viviendaId.invalid) {
+            <small class="error">Selecciona una vivienda.</small>
+          }
+        </div>
+        @if (sesion.esAdmin()) {
+          <div class="campo">
+            <label for="usuario">ID del usuario registrado</label
+            ><input id="usuario" type="number" min="1" step="1" formControlName="usuarioId" />
+            @if (formulario.controls.usuarioId.touched && formulario.controls.usuarioId.invalid) {
+              <small class="error">Introduce un ID entero positivo.</small>
+            }
+          </div>
+        }
+        <div class="campo">
+          <label for="inicio">Fecha de inicio</label
+          ><input id="inicio" type="date" formControlName="fechaInicio" />
+          @if (formulario.controls.fechaInicio.touched && formulario.controls.fechaInicio.invalid) {
+            <small class="error">La fecha de inicio es obligatoria.</small>
+          }
+        </div>
+        <div class="campo">
+          <label for="fin">Fecha de fin</label
+          ><input id="fin" type="date" formControlName="fechaFin" />
+          @if (formulario.controls.fechaFin.touched && formulario.controls.fechaFin.invalid) {
+            <small class="error">La fecha de fin es obligatoria.</small>
+          }
+        </div>
+        @if (formulario.hasError('fechas')) {
+          <p class="error">La fecha de fin debe ser posterior a la de inicio.</p>
+        }
+        @if (id() !== null) {
+          <div class="campo">
+            <label for="estado-formulario">Estado</label
+            ><select id="estado-formulario" formControlName="estado">
+              <option value="pendiente">Pendiente</option>
+              @if (sesion.esAdmin() || estadoOriginal() === 'confirmada') {
+                <option value="confirmada">Confirmada</option>
+              }
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+        }
+        <button class="boton" type="submit" [disabled]="guardando() || viviendas().length === 0">
+          {{ guardando() ? 'Guardando...' : 'Guardar reserva' }}
+        </button>
+        @if (viviendas().length === 0) {
+          <p>No hay viviendas. Añade una antes de reservar.</p>
+        }
+      </form>
+    }
+  </div>
+</section>

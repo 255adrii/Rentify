@@ -23,7 +23,7 @@ export class Registro {
   enviando = signal(false);
 
   formulario = this.fb.nonNullable.group({
-    nombre: ['', Validators.required],
+    nombre: ['', [Validators.required, Validators.pattern(/\S/)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [
       Validators.required,
@@ -32,6 +32,7 @@ export class Registro {
   });
 
   registrar() {
+    if (this.enviando()) return;
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;

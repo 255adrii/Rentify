@@ -1,0 +1,97 @@
+<section class="pagina">
+  <div class="cabecera">
+    <div>
+      <h1>{{ sesion.esAdmin() ? 'Todas las reservas' : 'Mis reservas' }}</h1>
+      <p>Gestiona las estancias de Rentify.</p>
+    </div>
+    <a class="boton" routerLink="/reservas/nueva">+ Nueva reserva</a>
+  </div>
+  <div class="herramientas">
+    <app-filtro
+      etiqueta="Buscar reserva"
+      placeholder="Vivienda, usuario o estado..."
+      (textoCambiado)="busqueda.set($event)"
+    />
+    <div class="campo">
+      <label for="estado">Estado</label
+      ><select id="estado" [value]="estado()" (change)="estado.set(valor($event))">
+        <option value="">Todos</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="confirmada">Confirmada</option>
+        <option value="cancelada">Cancelada</option>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="orden-reservas">Ordenar por</label
+      ><select id="orden-reservas" [value]="orden()" (change)="orden.set(valor($event))">
+        <option value="inicio-asc">Inicio: primero las próximas</option>
+        <option value="inicio-desc">Inicio: fecha descendente</option>
+        <option value="vivienda">Vivienda A-Z</option>
+        <option value="estado">Estado A-Z</option>
+      </select>
+    </div>
+  </div>
+  @if (errorAccion()) {
+    <p class="error" role="alert">{{ errorAccion() }}</p>
+  }
+  @if (cargando()) {
+    <p role="status">Cargando reservas...</p>
+  } @else if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+    <button class="boton" (click)="cargar()">Reintentar</button>
+  } @else {
+    <div class="tabla-contenedor">
+      <table>
+        <caption>
+          Reservas encontradas:
+          {{
+            visibles().length
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Reserva</th>
+            <th scope="col">Vivienda</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Inicio</th>
+            <th scope="col">Fin</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of visibles(); track r.id) {
+            <tr>
+              <td>#{{ r.id }}</td>
+              <td>
+                <a [routerLink]="['/viviendas', r.viviendaId]">{{ titulo(r.viviendaId) }}</a>
+              </td>
+              <td>#{{ r.usuarioId }}</td>
+              <td>{{ r.fechaInicio | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+              <td>{{ r.fechaFin | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+              <td>
+                <span class="etiqueta">{{ r.estado }}</span>
+              </td>
+              <td>
+                <div class="acciones">
+                  <a class="boton secundario" [routerLink]="['/reservas/editar', r.id]">Editar</a>
+                  <button
+                    class="boton peligro"
+                    [disabled]="eliminando() !== null"
+                    (click)="eliminar(r)"
+                  >
+                    {{ eliminando() === r.id ? 'Eliminando...' : 'Eliminar' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7">No se encontraron reservas.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -1,51 +1,30 @@
 <nav class="navbar">
-
   <a routerLink="/dashboard" class="logo">
-    <img
-      src="/logo-rentify.png"
-      alt="Logotipo de Rentify"
-      class="logo-img"
-    />
+    <img src="/logo-rentify.png" alt="Logotipo de Rentify" class="logo-img" />
 
-    <span>
-      rentify<span class="logo-dot">.</span>
-    </span>
+    <span> rentify<span class="logo-dot">.</span> </span>
   </a>
 
   <div class="nav-links">
-
     @if (sesion.estaLogueado()) {
-
       <a routerLink="/dashboard">Inicio</a>
 
       <a routerLink="/viviendas">Viviendas</a>
+      <a routerLink="/reservas">Reservas</a>
+      <a routerLink="/carrito" aria-live="polite">Carrito ({{ carrito.cantidad() }})</a>
+      <a routerLink="/perfil">Mi perfil</a>
 
-      <span class="nombre-usuario">
-        Hola, {{ sesion.usuario()?.nombre }}
-      </span>
+      <span class="nombre-usuario"> Hola, {{ sesion.usuario()?.nombre }} </span>
 
       @if (sesion.esAdmin()) {
-        <span class="admin-label">Administrador</span>
+        <a routerLink="/administracion" class="admin-label">Administración</a>
       }
 
-      <button
-        type="button"
-        class="btn-salir"
-        (click)="cerrarSesion()"
-      >
-        Cerrar sesión
-      </button>
-
+      <button type="button" class="btn-salir" (click)="cerrarSesion()">Cerrar sesión</button>
     } @else {
-
       <a routerLink="/login">Iniciar sesión</a>
 
-      <a routerLink="/registro" class="btn-registro">
-        Registrarse
-      </a>
-
+      <a routerLink="/registro" class="btn-registro"> Registrarse </a>
     }
-
   </div>
-
 </nav>

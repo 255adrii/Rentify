@@ -1,4 +1,3 @@
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -26,9 +25,16 @@ export interface DatosLogin {
   password: string;
 }
 
+export interface DatosPerfil {
+  password: string;
+  nombre: string;
+  email: string;
+}
+
 export interface RespuestaLogin {
   mensaje: string;
   usuario: Usuario;
+  token: string;
 }
 
 @Injectable({
@@ -52,6 +58,18 @@ export class Auth {
     `${this.apiUrl}/login`,
     datos
     );
+  }
+
+  actualizarPerfil(datos: DatosPerfil): Observable<RespuestaRegistro> {
+    return this.http.put<RespuestaRegistro>(`${this.apiUrl}/perfil`, datos);
+  }
+
+  comprobarSesion(): Observable<{ usuario: Usuario }> {
+    return this.http.get<{ usuario: Usuario }>(`${this.apiUrl}/me`);
+  }
+
+  cerrarSesion(): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/logout`, {});
   }
 
 }

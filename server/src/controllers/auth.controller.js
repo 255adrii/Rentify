@@ -1,5 +1,6 @@
 
 const usuarioService = require('../services/usuario.service');
+const sesionService = require('../services/sesion.service');
 
 const registrar = async (req, res) => {
     try {
@@ -22,7 +23,8 @@ const login = async (req, res) => {
 
         res.status(200).json({
             mensaje: 'Login correcto',
-            usuario: usuario
+            usuario,
+            token: sesionService.crear(usuario.id)
         });
     } catch (error) {
         res.status(401).json({
@@ -32,4 +34,19 @@ const login = async (req, res) => {
 };
 
 
-module.exports = { registrar,login };
+const actualizarPerfil = async (req, res) => {
+    try {
+        const usuario = await usuarioService.actualizarPerfil(req.usuario.id, req.body);
+        res.json({ mensaje: 'Perfil actualizado', usuario });
+    } catch (error) {
+        res.status(400).json({ mensaje: error.message });
+    }
+};
+
+const obtenerSesion = (req, res) => res.json({ usuario: req.usuario });
+const cerrarSesion = (req, res) => {
+    sesionService.eliminar(req.token);
+    res.json({ mensaje: 'Sesión cerrada' });
+};
+
+module.exports = { registrar, login, actualizarPerfil, obtenerSesion, cerrarSesion };

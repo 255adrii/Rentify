@@ -1,0 +1,79 @@
+<section class="pagina">
+  <div class="cabecera">
+    <div>
+      <h1>Tu carrito</h1>
+      <p>Selecciona las fechas de las viviendas que quieres reservar.</p>
+    </div>
+    <a routerLink="/viviendas">Seguir explorando</a>
+  </div>
+  @if (mensaje()) {
+    <p class="exito" role="status">{{ mensaje() }}</p>
+    <a routerLink="/reservas">Ver mis reservas</a>
+  }
+  @for (error of errores(); track $index) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+  @if (carrito.cantidad()) {
+    <div class="resumen-grid">
+      @for (v of carrito.viviendas(); track v.id) {
+        <article class="panel">
+          <h2>{{ v.titulo }}</h2>
+          <p>{{ v.precio | currency: 'EUR' }} / mes</p>
+          <div class="acciones">
+            <a [routerLink]="['/viviendas', v.id]">Ver vivienda</a
+            ><button
+              class="boton secundario"
+              [disabled]="enviando()"
+              (click)="carrito.eliminar(v.id)"
+            >
+              Quitar
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+    <div class="panel">
+      <p>
+        <strong>Total mensual de referencia: {{ carrito.totalMensual() | currency: 'EUR' }}</strong>
+      </p>
+      <p class="ayuda">
+        Las mismas fechas se aplican a todas las viviendas seleccionadas. Se crean reservas
+        pendientes; no se realiza ningún pago.
+      </p>
+      <form [formGroup]="formulario" (ngSubmit)="confirmar()">
+        <fieldset [disabled]="enviando()">
+          <legend>Fechas de estancia</legend>
+          <div class="campo">
+            <label for="inicio-carrito">Inicio</label
+            ><input id="inicio-carrito" type="date" formControlName="fechaInicio" />
+          </div>
+          <div class="campo">
+            <label for="fin-carrito">Fin</label
+            ><input id="fin-carrito" type="date" formControlName="fechaFin" />
+          </div>
+        </fieldset>
+        @if (formulario.touched && formulario.invalid) {
+          <p class="error">Introduce ambas fechas y un fin posterior al inicio.</p>
+        }
+        <div class="acciones">
+          <button class="boton" type="submit" [disabled]="enviando()">
+            {{ enviando() ? 'Reservando...' : 'Crear reservas' }}
+          </button>
+          <button
+            class="boton secundario"
+            type="button"
+            [disabled]="enviando()"
+            (click)="carrito.vaciar()"
+          >
+            Vaciar carrito
+          </button>
+        </div>
+      </form>
+    </div>
+  } @else {
+    <div class="panel">
+      <p>Tu carrito está vacío.</p>
+      <a class="boton" routerLink="/viviendas">Explorar viviendas</a>
+    </div>
+  }
+</section>

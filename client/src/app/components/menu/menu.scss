@@ -1,4 +1,3 @@
-
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -36,7 +35,9 @@
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .nav-links a {
@@ -93,7 +94,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   .navbar {
     padding: 16px;
     flex-wrap: wrap;

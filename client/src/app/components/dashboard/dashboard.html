@@ -1,1 +1,39 @@
-<p>dashboard works!</p>
+@if (sesion.esAdmin()) {
+  <app-administracion />
+} @else {
+  <section class="pagina">
+    <h1>Hola, {{ sesion.usuario()?.nombre }}</h1>
+    <p>Encuentra tu próximo hogar y organiza tus reservas.</p>
+    @if (cargando()) {
+      <p>Cargando resumen...</p>
+    } @else if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+      <button class="boton" (click)="cargar()">Reintentar</button>
+    } @else {
+      <div class="resumen-grid">
+        <article class="panel">
+          <h2>Viviendas</h2>
+          <p class="cifra">{{ viviendas() }}</p>
+          <a routerLink="/viviendas">Explorar viviendas</a>
+        </article>
+        <article class="panel">
+          <h2>{{ sesion.esAdmin() ? 'Todas las reservas' : 'Mis reservas' }}</h2>
+          <p class="cifra">{{ propias().length }}</p>
+          <p>{{ pendientes() }} pendientes</p>
+          <a routerLink="/reservas">Gestionar reservas</a>
+        </article>
+        <article class="panel">
+          <h2>Carrito</h2>
+          <p class="cifra">{{ carrito.cantidad() }}</p>
+          <a routerLink="/carrito">Revisar selección</a>
+        </article>
+      </div>
+    }
+    <div class="acciones">
+      <a class="boton" routerLink="/perfil">Mi perfil</a>
+      @if (sesion.esAdmin()) {
+        <a class="boton secundario" routerLink="/administracion">Administración</a>
+      }
+    </div>
+  </section>
+}
