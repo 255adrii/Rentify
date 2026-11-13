@@ -1,0 +1,44 @@
+<section class="viviendas-page">
+
+  <div class="encabezado">
+    <h1>Descubre tu próximo hogar</h1>
+    <p>Explora las viviendas disponibles en Rentify.</p>
+  </div>
+
+  @if (cargando()) {
+    <p>Cargando viviendas...</p>
+  } @else if (mensajeError()) {
+    <p class="error">{{ mensajeError() }}</p>
+  } @else {
+
+    <div class="viviendas-grid">
+
+      @for (vivienda of viviendas(); track vivienda.id) {
+
+        <article class="vivienda-card">
+
+          <div class="vivienda-imagen">
+            <span>⌂</span>
+          </div>
+
+          <div class="vivienda-info">
+
+            <h2>{{ vivienda.titulo }}</h2>
+
+            <p class="precio">
+              {{ vivienda.precio }} € / mes
+            </p>
+
+          </div>
+
+        </article>
+
+      } @empty {
+        <p>No hay viviendas disponibles.</p>
+      }
+
+    </div>
+
+  }
+
+</section>

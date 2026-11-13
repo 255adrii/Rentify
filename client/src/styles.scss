@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+
+:root {
+  --color-primary: #26352b;
+  --color-primary-hover: #3d5242;
+
+  --color-background: #f8f7f4;
+  --color-surface: #ffffff;
+
+  --color-text: #26352b;
+  --color-text-secondary: #68756c;
+
+  --color-border: #e4e7e1;
+  --color-accent: #d8c6ac;
+
+  --border-radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
