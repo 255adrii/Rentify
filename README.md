@@ -80,6 +80,16 @@ $env:RENTIFY_ADMIN_PASSWORD = [System.Net.NetworkCredential]::new('', $claveAdmi
 $env:PORT = '3000'
 npm.cmd start
 ```
+(
+  IFS= read -r -p 'Correo del administrador: ' RENTIFY_ADMIN_EMAIL
+  IFS= read -r -s -p 'Contraseña del administrador: ' RENTIFY_ADMIN_PASSWORD
+  printf '\n'
+
+  export RENTIFY_ADMIN_EMAIL RENTIFY_ADMIN_PASSWORD
+  export PORT=3000
+
+  npm start
+)
 
 Después, registra la cuenta desde la aplicación con ese mismo correo y contraseña. Al iniciar sesión aparecerá **Administración** en el menú.
 
